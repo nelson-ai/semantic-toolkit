@@ -24,8 +24,10 @@ describe('Namespaces and prefixes', () => {
   it('has methods to deal with namespaces', () => {
     const _ = new SemanticToolkit();
 
-    assert.isFunction(_.getNamespace);
+    assert.isFunction(_.getNamespaceForPrefix);
+    assert.isFunction(_.getPrefixForNamespace);
     assert.isFunction(_.addNamespace);
+    assert.isFunction(_.hasPrefix);
     assert.isFunction(_.hasNamespace);
 
     assert.isFunction(_.isPrefix);
@@ -75,37 +77,56 @@ describe('Namespaces and prefixes', () => {
   it('knows the prefixes of common namespaces', () => {
     const _ = new SemanticToolkit();
 
-    assert.isTrue(_.hasNamespace('rdf'));
-    assert.isTrue(_.hasNamespace('rdfs'));
-    assert.isTrue(_.hasNamespace('xsd'));
-    assert.isTrue(_.hasNamespace('owl'));
+    assert.isTrue(_.hasPrefix('rdf'));
+    assert.isTrue(_.hasPrefix('rdfs'));
+    assert.isTrue(_.hasPrefix('xsd'));
+    assert.isTrue(_.hasPrefix('owl'));
 
-    assert.strictEqual(_.getNamespace('rdf'), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-    assert.strictEqual(_.getNamespace('rdfs'), 'http://www.w3.org/2000/01/rdf-schema#');
-    assert.strictEqual(_.getNamespace('xsd'), 'http://www.w3.org/2001/XMLSchema#');
-    assert.strictEqual(_.getNamespace('owl'), 'http://www.w3.org/2002/07/owl#');
+    assert.isTrue(_.hasNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'));
+    assert.isTrue(_.hasNamespace('http://www.w3.org/2000/01/rdf-schema#'));
+    assert.isTrue(_.hasNamespace('http://www.w3.org/2001/XMLSchema#'));
+    assert.isTrue(_.hasNamespace('http://www.w3.org/2002/07/owl#'));
+
+    assert.strictEqual(_.getNamespaceForPrefix('rdf'), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+    assert.strictEqual(_.getNamespaceForPrefix('rdfs'), 'http://www.w3.org/2000/01/rdf-schema#');
+    assert.strictEqual(_.getNamespaceForPrefix('xsd'), 'http://www.w3.org/2001/XMLSchema#');
+    assert.strictEqual(_.getNamespaceForPrefix('owl'), 'http://www.w3.org/2002/07/owl#');
+
+    assert.strictEqual(_.getPrefixForNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'), 'rdf');
+    assert.strictEqual(_.getPrefixForNamespace('http://www.w3.org/2000/01/rdf-schema#'), 'rdfs');
+    assert.strictEqual(_.getPrefixForNamespace('http://www.w3.org/2001/XMLSchema#'), 'xsd');
+    assert.strictEqual(_.getPrefixForNamespace('http://www.w3.org/2002/07/owl#'), 'owl');
   });
 
   it('does not know all prefixes', () => {
     const _ = new SemanticToolkit();
 
-    assert.isFalse(_.hasNamespace('foaf'));
-    assert.strictEqual(_.getNamespace('foaf'), null);
+    assert.isFalse(_.hasPrefix('foaf'));
+    assert.isFalse(_.hasNamespace('http://xmlns.com/foaf/0.1/'));
+    assert.strictEqual(_.getNamespaceForPrefix('foaf'), null);
+    assert.strictEqual(_.getPrefixForNamespace('http://xmlns.com/foaf/0.1/'), null);
   });
 
   it('accepts namespaces at instanciation', () => {
     const _ = new SemanticToolkit({
       '': 'http://base-namespace.com/',
-      foo: 'http://foo.com#', // with end delimiter
-      bar: 'http://bar.com', // without end delimiter
+      foo: 'http://foo.com#', // with # end delimiter
+      bar: 'http://bar.com/', // with / end delimiter
+      baz: 'http://baz.com', // without end delimiter
     });
 
-    assert.isTrue(_.hasNamespace(''));
-    assert.isTrue(_.hasNamespace('foo'));
-    assert.isTrue(_.hasNamespace('bar'));
-    assert.strictEqual(_.getNamespace(''), 'http://base-namespace.com/');
-    assert.strictEqual(_.getNamespace('foo'), 'http://foo.com#');
-    assert.strictEqual(_.getNamespace('bar'), 'http://bar.com');
+    assert.isTrue(_.hasPrefix(''));
+    assert.isTrue(_.hasPrefix('foo'));
+    assert.isTrue(_.hasPrefix('bar'));
+    assert.isTrue(_.hasPrefix('baz'));
+
+    assert.strictEqual(_.getNamespaceForPrefix(''), 'http://base-namespace.com/');
+    assert.strictEqual(_.getNamespaceForPrefix('foo'), 'http://foo.com#');
+    assert.strictEqual(_.getNamespaceForPrefix('baz'), 'http://baz.com');
+
+    assert.strictEqual(_.getPrefixForNamespace('http://base-namespace.com/'), '');
+    assert.strictEqual(_.getPrefixForNamespace('http://foo.com#'), 'foo');
+    assert.strictEqual(_.getPrefixForNamespace('http://baz.com'), 'baz');
   });
 
   // TODO: _.addNamespace({ n1: ..., n2: ... })
@@ -113,8 +134,10 @@ describe('Namespaces and prefixes', () => {
     const _ = new SemanticToolkit();
 
     assert.doesNotThrow(() => _.addNamespace('foo', 'http://foo.com#'));
-    assert.isTrue(_.hasNamespace('foo'));
-    assert.strictEqual(_.getNamespace('foo'), 'http://foo.com#');
+    assert.isTrue(_.hasPrefix('foo'));
+    assert.isTrue(_.hasNamespace('http://foo.com#'));
+    assert.strictEqual(_.getNamespaceForPrefix('foo'), 'http://foo.com#');
+    assert.strictEqual(_.getPrefixForNamespace('http://foo.com#'), 'foo');
   });
 
   it('does not add malformed prefixes', () => {
@@ -134,17 +157,32 @@ describe('Namespaces and prefixes', () => {
   it('otherwise deals with malformed prefixes gracefully', () => {
     const _ = new SemanticToolkit();
 
-    assert.strictEqual(_.getNamespace(), null);
-    assert.strictEqual(_.getNamespace({}), null);
-    assert.strictEqual(_.getNamespace(111), null);
-    assert.strictEqual(_.getNamespace(() => 'rdf'), null);
+    assert.strictEqual(_.getNamespaceForPrefix(), null);
+    assert.strictEqual(_.getNamespaceForPrefix({}), null);
+    assert.strictEqual(_.getNamespaceForPrefix(111), null);
+    assert.strictEqual(_.getNamespaceForPrefix(() => 'rdf'), null);
 
-    assert.isFalse(_.hasNamespace());
-    assert.isFalse(_.hasNamespace({}));
-    assert.isFalse(_.hasNamespace(111));
-    assert.isFalse(_.hasNamespace(() => 'rdf'));
+    assert.isFalse(_.hasPrefix());
+    assert.isFalse(_.hasPrefix({}));
+    assert.isFalse(_.hasPrefix(111));
+    assert.isFalse(_.hasPrefix(() => 'rdf'));
   });
 });
+
+// describe('Local names', () => {
+//
+//   it('has methods to deal with local names', () => {
+//     const _ = new SemanticToolkit();
+//
+//     assert.isFunction(_.getIriLocalName);
+//     assert.isFunction(_.addNamespace);
+//     assert.isFunction(_.hasPrefix);
+//
+//     assert.isFunction(_.isPrefix);
+//     assert.isFunction(SemanticToolkit.isPrefix);
+//     assert.strictEqual(_.isPrefix, SemanticToolkit.isPrefix);
+//   });
+// });
 
 // Comming up:
 // localNames
