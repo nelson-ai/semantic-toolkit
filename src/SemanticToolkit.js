@@ -1,6 +1,9 @@
 const invariant = require('./utils/invariant');
 const isIri = require('./tools/isIri');
 const isPrefix = require('./tools/isPrefix');
+const splitIri = require('./tools/splitIri');
+const getNamespace = require('./tools/getNamespace');
+const getLocalName = require('./tools/getLocalName');
 
 const basePrefixeMap = {
   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -24,8 +27,13 @@ class SemanticToolkit {
 
     Object.keys(this.prefixMap).forEach(key => this.namespaceMap[this.prefixMap[key]] = key);
 
+    /* Global methods */
+
     this.isIri = isIri;
     this.isPrefix = isPrefix;
+    this.splitIri = splitIri;
+    this.getNamespace = getNamespace;
+    this.getLocalName = getLocalName;
   }
 
   hasPrefix(prefix) {
@@ -49,8 +57,8 @@ class SemanticToolkit {
   }
 
   addNamespace(prefix, namespace) {
-    if (!isPrefix(prefix)) throw new Error(`Malformed prefix: ${prefix}`);
-    if (!isIri(namespace)) throw new Error(`Malformed namespace: ${namespace}`);
+    invariant(isPrefix(prefix), `Malformed prefix: ${prefix}`);
+    invariant(isIri(namespace), `Malformed namespace: ${namespace}`);
 
     this.prefixMap[prefix] = namespace;
     this.namespaceMap[namespace] = prefix;

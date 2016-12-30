@@ -169,24 +169,60 @@ describe('Namespaces and prefixes', () => {
   });
 });
 
-// describe('Local names', () => {
-//
-//   it('has methods to deal with local names', () => {
-//     const _ = new SemanticToolkit();
-//
-//     assert.isFunction(_.getIriLocalName);
-//     assert.isFunction(_.addNamespace);
-//     assert.isFunction(_.hasPrefix);
-//
-//     assert.isFunction(_.isPrefix);
-//     assert.isFunction(SemanticToolkit.isPrefix);
-//     assert.strictEqual(_.isPrefix, SemanticToolkit.isPrefix);
-//   });
-// });
+describe('IRI structure', () => {
+
+  it('has methods to deal with the structure of an IRI', () => {
+    const _ = new SemanticToolkit();
+
+    assert.isFunction(_.splitIri);
+    assert.isFunction(_.getNamespace);
+    assert.isFunction(_.getLocalName);
+
+    assert.isFunction(SemanticToolkit.splitIri);
+    assert.strictEqual(_.splitIri, SemanticToolkit.splitIri);
+
+    assert.isFunction(SemanticToolkit.getNamespace);
+    assert.strictEqual(_.getNamespace, SemanticToolkit.getNamespace);
+
+    assert.isFunction(SemanticToolkit.getLocalName);
+    assert.strictEqual(_.getLocalName, SemanticToolkit.getLocalName);
+  });
+
+  it('splits IRIs', () => {
+    const _ = new SemanticToolkit();
+
+    assert.deepEqual(_.splitIri(':bar'), ['', 'bar']);
+    assert.deepEqual(_.splitIri('_:bar'), ['_', 'bar']);
+    assert.deepEqual(_.splitIri('foo:bar'), ['foo', 'bar']);
+    assert.deepEqual(_.splitIri('http://foo.com#bar'), ['http://foo.com', 'bar']);
+    assert.deepEqual(_.splitIri('http://foo.com/bar'), ['http://foo.com', 'bar']);
+  });
+
+  it('extracts namespaces', () => {
+    const _ = new SemanticToolkit();
+
+    assert.strictEqual(_.getNamespace(':bar'), '');
+    assert.strictEqual(_.getNamespace('_:bar'), '_');
+    assert.strictEqual(_.getNamespace('foo:bar'), 'foo');
+    assert.strictEqual(_.getNamespace('http://foo.com#bar'), 'http://foo.com');
+    assert.strictEqual(_.getNamespace('http://foo.com/bar'), 'http://foo.com');
+  });
+
+  it('extracts local names', () => {
+    const _ = new SemanticToolkit();
+
+    assert.strictEqual(_.getLocalName(':bar'), 'bar');
+    assert.strictEqual(_.getLocalName('_:bar'), 'bar');
+    assert.strictEqual(_.getLocalName('foo:bar'), 'bar');
+    assert.strictEqual(_.getLocalName('http://foo.com#bar'), 'bar');
+    assert.strictEqual(_.getLocalName('http://foo.com/bar'), 'bar');
+  });
+});
 
 // Comming up:
 // localNames
 // IRIs
 // literals
+// blank nodes
 // Wrapping/Unwrapping
 // way more
