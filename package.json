@@ -2,7 +2,7 @@
   "name": "semantic-toolkit",
   "version": "0.0.0",
   "description": "JavaScript + Semantic web = <3",
-  "author": "David Hérault <dherault@gmail.com> (https://github.com/dherault)",
+  "author": "David Hérault <dherault@nelson.ai> (https://github.com/dherault)",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
@@ -17,13 +17,13 @@
   "options": {
     "mocha": "--bail --check-leaks"
   },
-  "homepage": "https://github.com/dherault/semantic-toolkit#readme",
+  "homepage": "https://github.com/nelson-ai/semantic-toolkit#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dherault/semantic-toolkit.git"
+    "url": "git+https://github.com/nelson-ai/semantic-toolkit.git"
   },
   "bugs": {
-    "url": "https://github.com/dherault/semantic-toolkit/issues"
+    "url": "https://github.com/nelson-ai/semantic-toolkit/issues"
   },
   "keywords": [
     "semantic",
@@ -33,8 +33,8 @@
   ],
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^3.12.0",
-    "eslint-config-airbnb-base": "^10.0.1",
+    "eslint": "^3.12.2",
+    "eslint-config-nelson": "^0.1.0",
     "eslint-plugin-import": "^2.2.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0"
