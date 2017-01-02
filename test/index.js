@@ -56,6 +56,7 @@ describe('Namespaces and prefixes', () => {
     assert.isFalse(_.isPrefix('-foo'));
     assert.isFalse(_.isPrefix('1'));
     assert.isFalse(_.isPrefix('111foo'));
+    assert.isFalse(_.isPrefix('·foo'));
     assert.isFalse(_.isPrefix('http://foo.com#'));
 
     assert.isTrue(_.isPrefix(''));
@@ -65,6 +66,7 @@ describe('Namespaces and prefixes', () => {
     assert.isTrue(_.isPrefix('foo'));
     assert.isTrue(_.isPrefix('Foo'));
     assert.isTrue(_.isPrefix('FOO'));
+    assert.isTrue(_.isPrefix('fooॐ'));
     assert.isTrue(_.isPrefix('foo111'));
     assert.isTrue(_.isPrefix('_foo'));
     assert.isTrue(_.isPrefix('_111'));
@@ -169,7 +171,78 @@ describe('Namespaces and prefixes', () => {
   });
 });
 
-describe('IRI structure', () => {
+describe('IRI', () => {
+
+  it('has methods to deal with IRIs', () => {
+    const _ = new SemanticToolkit();
+
+    assert.isFunction(_.isIri);
+    assert.isFunction(_.isValidIri);
+    assert.isFunction(_.isExpandedIri);
+    assert.isFunction(_.isCompactedIri);
+    assert.isFunction(_.expandIri);
+    assert.isFunction(_.compactIri);
+
+    assert.isFunction(SemanticToolkit.isIri);
+    assert.strictEqual(_.isIri, SemanticToolkit.isIri);
+
+    assert.isFunction(SemanticToolkit.isValidIri);
+    assert.strictEqual(_.isValidIri, SemanticToolkit.isValidIri);
+
+    assert.isFunction(SemanticToolkit.isExpandedIri);
+    assert.strictEqual(_.isExpandedIri, SemanticToolkit.isExpandedIri);
+
+    assert.isFunction(SemanticToolkit.isCompactedIri);
+    assert.strictEqual(_.isCompactedIri, SemanticToolkit.isCompactedIri);
+  });
+
+  it('knows what a compacted IRI is', () => {
+    const _ = new SemanticToolkit();
+
+    assert.isTrue(_.isCompactedIri(':foo'));
+    assert.isTrue(_.isCompactedIri('_:foo'));
+    assert.isTrue(_.isCompactedIri('foo:bar'));
+    assert.isTrue(_.isCompactedIri('foo:bar111'));
+    assert.isTrue(_.isCompactedIri('ॐ:ॐ'));
+    assert.isTrue(_.isCompactedIri('f·o:bar'));
+
+    assert.isFalse(_.isCompactedIri('foo'));
+    assert.isFalse(_.isCompactedIri('foo:'));
+    assert.isFalse(_.isCompactedIri('foo:-'));
+    assert.isFalse(_.isCompactedIri('foo!:111'));
+    assert.isFalse(_.isCompactedIri('foo:111'));
+    assert.isFalse(_.isCompactedIri('·foo:bar'));
+    assert.isFalse(_.isCompactedIri('foo::bar'));
+    assert.isFalse(_.isCompactedIri('foo:bar/baz'));
+    assert.isFalse(_.isCompactedIri('http://foo.com/bar'));
+
+    assert.isFalse(_.isCompactedIri());
+    assert.isFalse(_.isCompactedIri({}));
+    assert.isFalse(_.isCompactedIri(111));
+    assert.isFalse(_.isCompactedIri(() => 'rdf'));
+  });
+
+  it('knows what an expanded IRI is', () => {
+    const _ = new SemanticToolkit();
+
+    assert.isFalse(_.isExpandedIri('foo'));
+    assert.isFalse(_.isExpandedIri('_:foo'));
+    assert.isFalse(_.isExpandedIri('_:foo'));
+    assert.isFalse(_.isExpandedIri('foo:bar'));
+    assert.isFalse(_.isExpandedIri('foo://bar'));
+    assert.isFalse(_.isExpandedIri('http://bar'));
+
+    assert.isFalse(_.isExpandedIri('foo:bar/baz'));
+    assert.isFalse(_.isExpandedIri('http://foo.com/bar'));
+
+    assert.isFalse(_.isExpandedIri());
+    assert.isFalse(_.isExpandedIri({}));
+    assert.isFalse(_.isExpandedIri(111));
+    assert.isFalse(_.isExpandedIri(() => 'rdf'));
+  });
+});
+
+describe('IRI manipulation', () => {
 
   it('has methods to deal with the structure of an IRI', () => {
     const _ = new SemanticToolkit();
@@ -220,8 +293,7 @@ describe('IRI structure', () => {
 });
 
 // Comming up:
-// localNames
-// IRIs
+// expansion, compaction
 // literals
 // blank nodes
 // Wrapping/Unwrapping

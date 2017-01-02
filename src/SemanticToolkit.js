@@ -1,5 +1,8 @@
 const invariant = require('./utils/invariant');
 const isIri = require('./tools/isIri');
+const isValidIri = require('./tools/isValidIri');
+const isExpandedIri = require('./tools/isExpandedIri');
+const isCompactedIri = require('./tools/isCompactedIri');
 const isPrefix = require('./tools/isPrefix');
 const splitIri = require('./tools/splitIri');
 const getNamespace = require('./tools/getNamespace');
@@ -29,11 +32,16 @@ class SemanticToolkit {
 
     /* Global methods */
 
-    this.isIri = isIri;
-    this.isPrefix = isPrefix;
-    this.splitIri = splitIri;
-    this.getNamespace = getNamespace;
-    this.getLocalName = getLocalName;
+    Object.assign(this, {
+      isIri,
+      isValidIri,
+      isExpandedIri,
+      isCompactedIri,
+      isPrefix,
+      splitIri,
+      getNamespace,
+      getLocalName,
+    });
   }
 
   hasPrefix(prefix) {
@@ -62,6 +70,27 @@ class SemanticToolkit {
 
     this.prefixMap[prefix] = namespace;
     this.namespaceMap[namespace] = prefix;
+  }
+
+  // expandIri and compactIri assume their inputs are valid
+  expandIri(compactedIri) {
+    const [prefix, localName] = splitIri(compactedIri);
+
+    const namespace = this.prefixMap[prefix];
+
+    invariant(namespace, `Unknow prefix: ${prefix}`);
+
+    return namespace + localName;
+  }
+
+  compactIri(expandedIri) {
+    const [namespace, localName] = splitIri(expandedIri);
+
+    const prefix = this.namespaceMap[namespace];
+
+    invariant(prefix, `Unknow namespace: ${namespace}`);
+
+    return `${prefix}:${localName}`;
   }
 
 }
