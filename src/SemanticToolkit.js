@@ -1,12 +1,13 @@
 const invariant = require('./utils/invariant');
-const isIri = require('./tools/isIri');
-const isValidIri = require('./tools/isValidIri');
-const isExpandedIri = require('./tools/isExpandedIri');
-const isCompactedIri = require('./tools/isCompactedIri');
-const isPrefix = require('./tools/isPrefix');
-const splitIri = require('./tools/splitIri');
-const getNamespace = require('./tools/getNamespace');
 const getLocalName = require('./tools/getLocalName');
+const getNamespace = require('./tools/getNamespace');
+const isBlankNode = require('./tools/isBlankNode');
+const isCompactedIri = require('./tools/isCompactedIri');
+const isExpandedIri = require('./tools/isExpandedIri');
+const isIri = require('./tools/isIri');
+const isPrefix = require('./tools/isPrefix');
+const isValidIri = require('./tools/isValidIri');
+const splitIri = require('./tools/splitIri');
 
 const basePrefixeMap = {
   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -33,14 +34,15 @@ class SemanticToolkit {
     /* Global methods */
 
     Object.assign(this, {
-      isIri,
-      isValidIri,
-      isExpandedIri,
-      isCompactedIri,
-      isPrefix,
-      splitIri,
-      getNamespace,
       getLocalName,
+      getNamespace,
+      isBlankNode,
+      isCompactedIri,
+      isExpandedIri,
+      isIri,
+      isPrefix,
+      isValidIri,
+      splitIri,
     });
   }
 

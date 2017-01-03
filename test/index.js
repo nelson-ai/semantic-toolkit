@@ -29,9 +29,8 @@ describe('Namespaces and prefixes', () => {
     assert.isFunction(_.addNamespace);
     assert.isFunction(_.hasPrefix);
     assert.isFunction(_.hasNamespace);
-
     assert.isFunction(_.isPrefix);
-    assert.isFunction(SemanticToolkit.isPrefix);
+
     assert.strictEqual(_.isPrefix, SemanticToolkit.isPrefix);
   });
 
@@ -182,83 +181,85 @@ describe('IRI', () => {
     assert.isFunction(_.isCompactedIri);
     assert.isFunction(_.expandIri);
     assert.isFunction(_.compactIri);
-
-    assert.isFunction(SemanticToolkit.isIri);
-    assert.strictEqual(_.isIri, SemanticToolkit.isIri);
-
-    assert.isFunction(SemanticToolkit.isValidIri);
-    assert.strictEqual(_.isValidIri, SemanticToolkit.isValidIri);
-
-    assert.isFunction(SemanticToolkit.isExpandedIri);
-    assert.strictEqual(_.isExpandedIri, SemanticToolkit.isExpandedIri);
-
-    assert.isFunction(SemanticToolkit.isCompactedIri);
-    assert.strictEqual(_.isCompactedIri, SemanticToolkit.isCompactedIri);
-  });
-
-  it('knows what a compacted IRI is', () => {
-    const _ = new SemanticToolkit();
-
-    assert.isTrue(_.isCompactedIri(':foo'));
-    assert.isTrue(_.isCompactedIri('_:foo'));
-    assert.isTrue(_.isCompactedIri('foo:bar'));
-    assert.isTrue(_.isCompactedIri('foo:bar111'));
-    assert.isTrue(_.isCompactedIri('ॐ:ॐ'));
-    assert.isTrue(_.isCompactedIri('f·o:bar'));
-
-    assert.isFalse(_.isCompactedIri('foo'));
-    assert.isFalse(_.isCompactedIri('foo:'));
-    assert.isFalse(_.isCompactedIri('foo:-'));
-    assert.isFalse(_.isCompactedIri('foo!:111'));
-    assert.isFalse(_.isCompactedIri('foo:111'));
-    assert.isFalse(_.isCompactedIri('·foo:bar'));
-    assert.isFalse(_.isCompactedIri('foo::bar'));
-    assert.isFalse(_.isCompactedIri('foo:bar/baz'));
-    assert.isFalse(_.isCompactedIri('http://foo.com/bar'));
-
-    assert.isFalse(_.isCompactedIri());
-    assert.isFalse(_.isCompactedIri({}));
-    assert.isFalse(_.isCompactedIri(111));
-    assert.isFalse(_.isCompactedIri(() => 'rdf'));
-  });
-
-  it('knows what an expanded IRI is', () => {
-    const _ = new SemanticToolkit();
-
-    assert.isFalse(_.isExpandedIri('foo'));
-    assert.isFalse(_.isExpandedIri('_:foo'));
-    assert.isFalse(_.isExpandedIri('_:foo'));
-    assert.isFalse(_.isExpandedIri('foo:bar'));
-    assert.isFalse(_.isExpandedIri('foo://bar'));
-    assert.isFalse(_.isExpandedIri('http://bar'));
-
-    assert.isFalse(_.isExpandedIri('foo:bar/baz'));
-    assert.isFalse(_.isExpandedIri('http://foo.com/bar'));
-
-    assert.isFalse(_.isExpandedIri());
-    assert.isFalse(_.isExpandedIri({}));
-    assert.isFalse(_.isExpandedIri(111));
-    assert.isFalse(_.isExpandedIri(() => 'rdf'));
-  });
-});
-
-describe('IRI manipulation', () => {
-
-  it('has methods to deal with the structure of an IRI', () => {
-    const _ = new SemanticToolkit();
-
     assert.isFunction(_.splitIri);
     assert.isFunction(_.getNamespace);
     assert.isFunction(_.getLocalName);
 
-    assert.isFunction(SemanticToolkit.splitIri);
+    assert.strictEqual(_.isIri, SemanticToolkit.isIri);
+    assert.strictEqual(_.isValidIri, SemanticToolkit.isValidIri);
+    assert.strictEqual(_.isExpandedIri, SemanticToolkit.isExpandedIri);
+    assert.strictEqual(_.isCompactedIri, SemanticToolkit.isCompactedIri);
     assert.strictEqual(_.splitIri, SemanticToolkit.splitIri);
-
-    assert.isFunction(SemanticToolkit.getNamespace);
     assert.strictEqual(_.getNamespace, SemanticToolkit.getNamespace);
-
-    assert.isFunction(SemanticToolkit.getLocalName);
     assert.strictEqual(_.getLocalName, SemanticToolkit.getLocalName);
+  });
+
+  const validCompactedIris = [
+    ':foo',
+    '_:foo',
+    'foo:bar',
+    'foo:bar111',
+    'ॐ:ॐ',
+    'foo:ॐ',
+    'ॐ:foo',
+    'f·o:bar',
+    'rdf:type',
+    'rdfs:Resource',
+    'xsd:string',
+    'owl:class',
+  ];
+
+  const validExpandedIris = [
+    'http://foo.com',
+    'https://foo.com',
+    'http://foo.com/bar',
+    'https://foo.com/bar',
+    'http://foo.com#bar',
+    'https://foo.com#bar',
+    'http://foo.com#bar',
+    'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    'http://www.w3.org/2000/01/rdf-schema#',
+    'http://www.w3.org/2001/XMLSchema#',
+    'http://www.w3.org/2002/07/owl#',
+    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+    'http://www.w3.org/2000/01/rdf-schema#Resource',
+    'http://www.w3.org/2001/XMLSchema#string',
+    'http://www.w3.org/2002/07/owl#Class',
+  ];
+
+  const invalidIris = [
+    'foo',
+    'foo:',
+    'foo:-',
+    'foo!:111',
+    'foo:111',
+    '·foo:bar',
+    'foo::bar',
+    'foo:bar/baz',
+    'http:/foo.com/bar',
+    undefined,
+    {},
+    111,
+    /foo:bar/,
+    () => 'rdf',
+  ];
+
+  it('knows what an IRI is', () => {
+    const _ = new SemanticToolkit();
+
+    validCompactedIris.forEach(iri => {
+      assert.isTrue(_.isIri(iri), iri);
+      assert.isTrue(_.isValidIri(iri), iri);
+    });
+
+    validExpandedIris.forEach(iri => {
+      assert.isTrue(_.isIri(iri), iri);
+      assert.isTrue(_.isValidIri(iri), iri);
+    });
+
+    invalidIris.forEach(iri => {
+      assert.isFalse(_.isValidIri(iri), iri);
+    });
   });
 
   it('splits IRIs', () => {
@@ -267,8 +268,10 @@ describe('IRI manipulation', () => {
     assert.deepEqual(_.splitIri(':bar'), ['', 'bar']);
     assert.deepEqual(_.splitIri('_:bar'), ['_', 'bar']);
     assert.deepEqual(_.splitIri('foo:bar'), ['foo', 'bar']);
-    assert.deepEqual(_.splitIri('http://foo.com#bar'), ['http://foo.com', 'bar']);
-    assert.deepEqual(_.splitIri('http://foo.com/bar'), ['http://foo.com', 'bar']);
+    assert.deepEqual(_.splitIri('http://foo.com#bar'), ['http://foo.com#', 'bar']);
+    assert.deepEqual(_.splitIri('http://foo.com/bar'), ['http://foo.com/', 'bar']);
+    assert.deepEqual(_.splitIri('http://foo.com/bar#baz'), ['http://foo.com/bar#', 'baz']);
+    assert.deepEqual(_.splitIri('http://foo.com/bar/baz'), ['http://foo.com/bar/', 'baz']);
   });
 
   it('extracts namespaces', () => {
@@ -277,8 +280,10 @@ describe('IRI manipulation', () => {
     assert.strictEqual(_.getNamespace(':bar'), '');
     assert.strictEqual(_.getNamespace('_:bar'), '_');
     assert.strictEqual(_.getNamespace('foo:bar'), 'foo');
-    assert.strictEqual(_.getNamespace('http://foo.com#bar'), 'http://foo.com');
-    assert.strictEqual(_.getNamespace('http://foo.com/bar'), 'http://foo.com');
+    assert.strictEqual(_.getNamespace('http://foo.com#bar'), 'http://foo.com#');
+    assert.strictEqual(_.getNamespace('http://foo.com/bar'), 'http://foo.com/');
+    assert.strictEqual(_.getNamespace('http://foo.com/bar#baz'), 'http://foo.com/bar#');
+    assert.strictEqual(_.getNamespace('http://foo.com/bar/baz'), 'http://foo.com/bar/');
   });
 
   it('extracts local names', () => {
@@ -289,6 +294,82 @@ describe('IRI manipulation', () => {
     assert.strictEqual(_.getLocalName('foo:bar'), 'bar');
     assert.strictEqual(_.getLocalName('http://foo.com#bar'), 'bar');
     assert.strictEqual(_.getLocalName('http://foo.com/bar'), 'bar');
+    assert.strictEqual(_.getLocalName('http://foo.com/bar#baz'), 'baz');
+    assert.strictEqual(_.getLocalName('http://foo.com/bar/baz'), 'baz');
+  });
+
+  it('knows what a compacted IRI is', () => {
+    const _ = new SemanticToolkit();
+
+    validCompactedIris.forEach(iri => {
+      assert.isTrue(_.isCompactedIri(iri), iri);
+    });
+
+    validExpandedIris.forEach(iri => {
+      assert.isFalse(_.isCompactedIri(iri), iri);
+    });
+
+    invalidIris.forEach(iri => {
+      assert.isFalse(_.isCompactedIri(iri), iri);
+    });
+  });
+
+  it('knows what an expanded IRI is', () => {
+    const _ = new SemanticToolkit();
+
+    validExpandedIris.forEach(iri => {
+      assert.isTrue(_.isExpandedIri(iri), iri);
+    });
+
+    validCompactedIris.forEach(iri => {
+      assert.isFalse(_.isExpandedIri(iri), iri);
+    });
+
+    invalidIris.forEach(iri => {
+      assert.isFalse(_.isExpandedIri(iri), iri);
+    });
+  });
+
+  it('compacts IRI', () => {
+    const _ = new SemanticToolkit({ foo: 'http://foo.com/' });
+
+    assert.strictEqual(_.compactIri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), 'rdf:type');
+    assert.strictEqual(_.compactIri('http://www.w3.org/2000/01/rdf-schema#Resource'), 'rdfs:Resource');
+    assert.strictEqual(_.compactIri('http://www.w3.org/2001/XMLSchema#string'), 'xsd:string');
+    assert.strictEqual(_.compactIri('http://www.w3.org/2002/07/owl#Class'), 'owl:Class');
+    assert.strictEqual(_.compactIri('http://foo.com/bar'), 'foo:bar');
+  });
+
+  it('expands IRI', () => {
+    const _ = new SemanticToolkit({ foo: 'http://foo.com/' });
+
+    assert.strictEqual(_.expandIri('rdf:type'), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+    assert.strictEqual(_.expandIri('rdfs:Resource'), 'http://www.w3.org/2000/01/rdf-schema#Resource');
+    assert.strictEqual(_.expandIri('xsd:string'), 'http://www.w3.org/2001/XMLSchema#string');
+    assert.strictEqual(_.expandIri('owl:Class'), 'http://www.w3.org/2002/07/owl#Class');
+    assert.strictEqual(_.expandIri('foo:bar'), 'http://foo.com/bar');
+  });
+});
+
+describe('Blank nodes', () => {
+  it('has methods to deal with blank nodes', () => {
+    const _ = new SemanticToolkit();
+
+    assert.isFunction(_.isBlankNode);
+
+    assert.strictEqual(_.isBlankNode, SemanticToolkit.isBlankNode);
+  });
+
+  it('knows what a blank node is', () => {
+    const _ = new SemanticToolkit();
+
+    assert.isTrue(_.isBlankNode('_:b'));
+    assert.isTrue(_.isBlankNode('_:foo'));
+    assert.isTrue(_.isBlankNode('_:b111'));
+
+    assert.isFalse(_.isBlankNode(':bar'));
+    assert.isFalse(_.isBlankNode('foo:bar'));
+    assert.isFalse(_.isBlankNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'));
   });
 });
 

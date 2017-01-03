@@ -1,6 +1,7 @@
 module.exports = Object.assign(require('./src/SemanticToolkit'), {
   getLocalName: require('./src/tools/getLocalName'),
   getNamespace: require('./src/tools/getNamespace'),
+  isBlankNode: require('./src/tools/isBlankNode'),
   isCompactedIri: require('./src/tools/isCompactedIri'),
   isExpandedIri: require('./src/tools/isExpandedIri'),
   isIri: require('./src/tools/isIri'),

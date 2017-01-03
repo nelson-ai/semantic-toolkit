@@ -7,7 +7,8 @@ JavaScript + Semantic web = &lt;3
 
 ## References
 
-- [XML names specification](https://www.w3.org/TR/xml11/#IDAKUDS)
+- [XML recommendation](https://www.w3.org/TR/xml11/#IDAKUDS)
+- [Namespaces in XML recommendation](https://www.w3.org/TR/xml-names11/)
 - [IRI specification](https://www.ietf.org/rfc/rfc3987.txt)
 
 ## Contributing
