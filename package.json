@@ -4,7 +4,7 @@
   "description": "JavaScript + Semantic web = <3",
   "author": "David Hérault <dherault@nelson.ai> (https://github.com/dherault)",
   "license": "MIT",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -5,11 +5,18 @@
 
 JavaScript + Semantic web = &lt;3
 
+## Notes
+
+- Does not deal with relative IRIs
+- Focuses on SPARQL, Turtle and TriG specifications
+
 ## References
 
 - [XML recommendation](https://www.w3.org/TR/xml11/#IDAKUDS)
 - [Namespaces in XML recommendation](https://www.w3.org/TR/xml-names11/)
 - [IRI specification](https://www.ietf.org/rfc/rfc3987.txt)
+- [Literals in Turtle recommendation](https://www.w3.org/TR/turtle/#literals)
+- [Literals in SPARQL recommendation](https://www.w3.org/TR/rdf-sparql-query/#QSynLiterals)
 
 ## Contributing
 
