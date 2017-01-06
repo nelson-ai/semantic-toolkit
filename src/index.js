@@ -100,6 +100,31 @@ function isBlankNode(value) {
   return isPrefixedName(value) && getNamespace(value) === '_';
 }
 
+function isLiteral(value) {
+}
+
+function getLiteralValue(literal) {
+}
+
+function getLiteralDatatype(literal) {
+}
+
+function getLiteralLanguageTag(literal) {
+}
+
+function wrapIri(iri) {
+}
+
+function wrapLiteral(value, datatypeIri) {
+}
+
+function unwrapIri(wrappedIri) {
+}
+
+function unwrapLiteral(literal) {
+}
+
+
 module.exports = {
   isIri,
   isPrefix,
@@ -113,5 +138,13 @@ module.exports = {
   expandIri,
   compactIri,
   isBlankNode,
+  isLiteral,
+  getLiteralValue,
+  getLiteralDatatype,
+  getLiteralLanguageTag,
+  wrapIri,
+  wrapLiteral,
+  unwrapIri,
+  unwrapLiteral,
   prefixes,
 };

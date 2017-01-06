@@ -13,6 +13,14 @@ const {
   expandIri,
   compactIri,
   isBlankNode,
+  isLiteral,
+  getLiteralValue,
+  getLiteralDatatype,
+  getLiteralLanguageTag,
+  wrapIri,
+  wrapLiteral,
+  unwrapIri,
+  unwrapLiteral,
   prefixes,
 } = require('../src');
 
@@ -46,6 +54,7 @@ const validAbsoluteIris = [
   'https://foo.com#bar',
   'http://foo.com#bar',
   'http://ॐ.com/ॐ',
+  'http://gogame.com/布石',
   'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
   'http://www.w3.org/2000/01/rdf-schema#',
   'http://www.w3.org/2001/XMLSchema#',
@@ -54,6 +63,7 @@ const validAbsoluteIris = [
   'http://www.w3.org/2000/01/rdf-schema#Resource',
   'http://www.w3.org/2001/XMLSchema#string',
   'http://www.w3.org/2002/07/owl#Class',
+  'http://192.168.0.1:80',
   'file:/path/to/a/file.ext',
   'file:/file',
 ];
@@ -256,11 +266,64 @@ describe('Blank nodes', () => {
   });
 });
 
+const literals = [
+  { value: 'foo', wrapped: '"foo"' },
+  { value: 'foo', language: 'en', wrapped: '"foo"@en' },
+  { value: 'for real For Real', language: 'fr-FR', wrapped: '"for real For Real"@fr-FR' },
+  { value: 'foo', datatype: 'xsd:string', wrapped: '"foo"^^xsd:string' },
+  { value: 'foo', datatype: 'http://www.w3.org/2001/XMLSchema#string', wrapped: '"foo"^^<http://www.w3.org/2001/XMLSchema#string>' },
+  { value: 'http://foo.com#bar', wrapped: '"http://foo.com#bar"' },
+  { value: '"Look Ma\', "quotes on quotes"!"', wrapped: '"\"Look Ma\', \"quotes on quotes\"!\""' }, // eslint-disable-line no-useless-escape
+  // Abreviations are not RDF spec compliant, but are SPARQL, Turtle and TriG spec compliant
+  { value: true, wrapped: 'true' },
+  { value: false, wrapped: 'false' },
+  { value: true, datatype: 'xsd:boolean', wrapped: '"true"^^xsd:boolean' },
+  { value: false, datatype: 'xsd:boolean', wrapped: '"false"^^xsd:boolean' },
+  { value: true, datatype: 'http://www.w3.org/2001/XMLSchema#boolean', wrapped: '"true"^^<http://www.w3.org/2001/XMLSchema#boolean>' },
+  { value: false, datatype: 'http://www.w3.org/2001/XMLSchema#boolean', wrapped: '"false"^^<http://www.w3.org/2001/XMLSchema#boolean>' },
+  { value: 0, wrapped: '0' },
+  { value: -1, wrapped: '-1' },
+  { value: 111, wrapped: '111' },
+  { value: 1.618, wrapped: '1.618' },
+  { value: 6.626e-34, wrapped: '6.626e-34' },
+  { value: 0, datatype: 'xsd:integer', wrapped: '"0"^^xsd:integer' },
+  { value: -1, datatype: 'xsd:integer', wrapped: '"-1"^^xsd:integer' },
+  { value: 111, datatype: 'xsd:integer', wrapped: '"111"^^xsd:integer' },
+  { value: 1.618, datatype: 'xsd:decimal', wrapped: '"1.618"^^xsd:decimal' },
+  { value: 3.141592, datatype: 'xsd:float', wrapped: '"3.141592"^^xsd:float' }, // Not a real float
+  { value: 6.626e-34, datatype: 'xsd:double', wrapped: '"6.626e-34"^^xsd:double' }, // Could be a float
+  { value: 0, datatype: 'http://www.w3.org/2001/XMLSchema#integer', wrapped: '"0"^^<http://www.w3.org/2001/XMLSchema#integer>' },
+  { value: -1, datatype: 'http://www.w3.org/2001/XMLSchema#integer', wrapped: '"-1"^^<http://www.w3.org/2001/XMLSchema#integer>' },
+  { value: 111, datatype: 'http://www.w3.org/2001/XMLSchema#integer', wrapped: '"111"^^<http://www.w3.org/2001/XMLSchema#integer>' },
+  { value: 1.618, datatype: 'http://www.w3.org/2001/XMLSchema#decimal', wrapped: '"1.618"^^<http://www.w3.org/2001/XMLSchema#decimal>' },
+  { value: 3.141592, datatype: 'http://www.w3.org/2001/XMLSchema#float', wrapped: '"3.141592"^^<http://www.w3.org/2001/XMLSchema#float>' },
+  { value: 6.626e-34, datatype: 'http://www.w3.org/2001/XMLSchema#double', wrapped: '"6.626e-34"^^<http://www.w3.org/2001/XMLSchema#double>' },
+];
+
+const invalidLiterals = [
+  'foo',
+  'http://foo.om/',
+  0,
+  -1,
+  2.718281,
+];
+
 describe('Literals', () => {
 
+  it('has methods to deal with literals', () => {
+    assert.isFunction(isLiteral);
+    assert.isFunction(getLiteralValue);
+    assert.isFunction(getLiteralDatatype);
+    assert.isFunction(getLiteralLanguageTag);
+  });
 });
 
-// Comming up:
-// literals
-// Wrapping/Unwrapping
-// way more
+describe('Wrapping', () => {
+
+  it('has methods to deal with literals', () => {
+    assert.isFunction(wrapIri);
+    assert.isFunction(wrapLiteral);
+    assert.isFunction(unwrapIri);
+    assert.isFunction(unwrapLiteral);
+  });
+});

@@ -1,6 +1,7 @@
 # Semantic toolkit
 
 [![npm version](https://badge.fury.io/js/semantic-toolkit.svg)](https://www.npmjs.com/package/semantic-toolkit)
+[![Build Status](https://travis-ci.org/nelson-ai/semantic-toolkit.svg?branch=master)](https://travis-ci.org/nelson-ai/semantic-toolkit)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
 JavaScript + Semantic web = &lt;3
@@ -12,11 +13,12 @@ JavaScript + Semantic web = &lt;3
 
 ## References
 
-- [XML recommendation](https://www.w3.org/TR/xml11/#IDAKUDS)
-- [Namespaces in XML recommendation](https://www.w3.org/TR/xml-names11/)
 - [IRI specification](https://www.ietf.org/rfc/rfc3987.txt)
-- [Literals in Turtle recommendation](https://www.w3.org/TR/turtle/#literals)
-- [Literals in SPARQL recommendation](https://www.w3.org/TR/rdf-sparql-query/#QSynLiterals)
+- [Common syntactic constructs, XML recommendation](https://www.w3.org/TR/xml11/sec-common-syn)
+- [Namespaces in XML recommendation](https://www.w3.org/TR/xml-names11/)
+- [Literals, RDF recommendation](https://www.w3.org/TR/rdf11-concepts/#h3_section-Graph-Literal)
+- [Literals, SPARQL recommendation](https://www.w3.org/TR/rdf-sparql-query/#QSynLiterals)
+- [Literals, Turtle recommendation](https://www.w3.org/TR/turtle/#literals)
 
 ## Contributing
 
