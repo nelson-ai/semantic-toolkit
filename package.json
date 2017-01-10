@@ -1,13 +1,10 @@
 {
   "name": "semantic-toolkit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "JavaScript + Semantic web = <3",
   "author": "David Hérault <dherault@nelson.ai> (https://github.com/dherault)",
   "license": "MIT",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "scripts": {
     "test": "./node_modules/.bin/mocha $npm_package_options_mocha",
     "coverage": "./node_modules/.bin/istanbul cover _mocha -- $npm_package_options_mocha",
@@ -32,7 +29,7 @@
     "owl"
   ],
   "engines": {
-    "node" : ">=6.9.1"
+    "node": ">=6.9.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
