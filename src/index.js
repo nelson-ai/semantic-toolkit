@@ -8,6 +8,12 @@ const prefixes = {
   owl: 'http://www.w3.org/2002/07/owl#',
 };
 
+function registerPrefixes(newPrefixes) {
+  invariant(newPrefixes && typeof newPrefixes === 'object', 'Expected first argument to be a plain object');
+
+  Object.assign(prefixes, newPrefixes);
+}
+
 function isIri(value) {
   return typeof value === 'string' && value.includes(':');
 }
@@ -29,7 +35,6 @@ function isPrefixedName(value) {
 
   return isPrefix(splitArray[0]) && isLocalName(splitArray[1]);
 }
-
 
 // Weak test for an absolute IRI with a non-empty ihier-part
 function isAbsoluteIri(value) {
@@ -69,8 +74,8 @@ function getLocalName(iri) {
   return splitIri(iri)[1];
 }
 
-// expandIri and compactIri assume their inputs are valid
-function expandIri(prefixedName, additionalPrefixes = {}) {
+// expand and compact assume their inputs are valid
+function expand(prefixedName, additionalPrefixes = {}) {
   const [prefix, localName] = prefixedName.split(':');
 
   const namespace = Object.assign({}, prefixes, additionalPrefixes)[prefix];
@@ -80,7 +85,7 @@ function expandIri(prefixedName, additionalPrefixes = {}) {
   return namespace + localName;
 }
 
-function compactIri(absoluteIri, additionalPrefixes = {}) {
+function compact(absoluteIri, additionalPrefixes = {}) {
   const allPrefixes = Object.assign({}, prefixes, additionalPrefixes);
 
   const prefix = Object.keys(allPrefixes).find(key => absoluteIri.startsWith(allPrefixes[key]));
@@ -106,7 +111,7 @@ function isLiteral(value) {
 function getLiteralValue(literal) {
 }
 
-function getLiteralDatatype(literal) {
+function getLiteralDatatypeIri(literal) {
 }
 
 function getLiteralLanguageTag(literal) {
@@ -124,8 +129,8 @@ function unwrapIri(wrappedIri) {
 function unwrapLiteral(literal) {
 }
 
-
 module.exports = {
+  registerPrefixes,
   isIri,
   isPrefix,
   isLocalName,
@@ -135,12 +140,12 @@ module.exports = {
   splitIri,
   getNamespace,
   getLocalName,
-  expandIri,
-  compactIri,
+  expand,
+  compact,
   isBlankNode,
   isLiteral,
   getLiteralValue,
-  getLiteralDatatype,
+  getLiteralDatatypeIri,
   getLiteralLanguageTag,
   wrapIri,
   wrapLiteral,

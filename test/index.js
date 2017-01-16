@@ -1,6 +1,7 @@
 /* global describe it */
 const { assert } = require('chai');
 const {
+  registerPrefixes,
   isIri,
   isPrefix,
   isLocalName,
@@ -10,12 +11,12 @@ const {
   splitIri,
   getNamespace,
   getLocalName,
-  expandIri,
-  compactIri,
+  expand,
+  compact,
   isBlankNode,
   isLiteral,
   getLiteralValue,
-  getLiteralDatatype,
+  getLiteralDatatypeIri,
   getLiteralLanguageTag,
   wrapIri,
   wrapLiteral,
@@ -88,6 +89,7 @@ describe('Namespaces and prefixes', () => {
 
   it('has methods to deal with prefixes', () => {
     assert.isFunction(isPrefix);
+    assert.isFunction(registerPrefixes);
   });
 
   it('knows what a prefix is', () => {
@@ -145,8 +147,8 @@ describe('IRI', () => {
     assert.isFunction(isValidIri);
     assert.isFunction(isAbsoluteIri);
     assert.isFunction(isPrefixedName);
-    assert.isFunction(expandIri);
-    assert.isFunction(compactIri);
+    assert.isFunction(expand);
+    assert.isFunction(compact);
     assert.isFunction(splitIri);
     assert.isFunction(getNamespace);
     assert.isFunction(getLocalName);
@@ -227,21 +229,21 @@ describe('IRI', () => {
   });
 
   it('compacts IRI', () => {
-    assert.strictEqual(compactIri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), 'rdf:type');
-    assert.strictEqual(compactIri('http://www.w3.org/2000/01/rdf-schema#Resource'), 'rdfs:Resource');
-    assert.strictEqual(compactIri('http://www.w3.org/2001/XMLSchema#string'), 'xsd:string');
-    assert.strictEqual(compactIri('http://www.w3.org/2002/07/owl#Class'), 'owl:Class');
-    assert.strictEqual(compactIri('http://foo.com/bar', { foo: 'http://foo.com/' }), 'foo:bar');
-    assert.strictEqual(compactIri('http://foo.com/bar', { foo: 'http://foo.com' }), 'foo:bar');
+    assert.strictEqual(compact('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), 'rdf:type');
+    assert.strictEqual(compact('http://www.w3.org/2000/01/rdf-schema#Resource'), 'rdfs:Resource');
+    assert.strictEqual(compact('http://www.w3.org/2001/XMLSchema#string'), 'xsd:string');
+    assert.strictEqual(compact('http://www.w3.org/2002/07/owl#Class'), 'owl:Class');
+    assert.strictEqual(compact('http://foo.com/bar', { foo: 'http://foo.com/' }), 'foo:bar');
+    assert.strictEqual(compact('http://foo.com/bar', { foo: 'http://foo.com' }), 'foo:bar');
   });
 
   it('expands IRI', () => {
-    assert.strictEqual(expandIri('rdf:type'), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-    assert.strictEqual(expandIri('rdfs:Resource'), 'http://www.w3.org/2000/01/rdf-schema#Resource');
-    assert.strictEqual(expandIri('xsd:string'), 'http://www.w3.org/2001/XMLSchema#string');
-    assert.strictEqual(expandIri('owl:Class'), 'http://www.w3.org/2002/07/owl#Class');
-    assert.strictEqual(expandIri('foo:bar', { foo: 'http://foo.com/' }), 'http://foo.com/bar');
-    // assert.strictEqual(expandIri('foo:bar', { foo: 'http://foo.com' }), 'http://foo.com/bar');
+    assert.strictEqual(expand('rdf:type'), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+    assert.strictEqual(expand('rdfs:Resource'), 'http://www.w3.org/2000/01/rdf-schema#Resource');
+    assert.strictEqual(expand('xsd:string'), 'http://www.w3.org/2001/XMLSchema#string');
+    assert.strictEqual(expand('owl:Class'), 'http://www.w3.org/2002/07/owl#Class');
+    assert.strictEqual(expand('foo:bar', { foo: 'http://foo.com/' }), 'http://foo.com/bar');
+    // assert.strictEqual(expand('foo:bar', { foo: 'http://foo.com' }), 'http://foo.com/bar');
   });
 });
 
@@ -273,7 +275,8 @@ const literals = [
   { value: 'foo', datatype: 'xsd:string', wrapped: '"foo"^^xsd:string' },
   { value: 'foo', datatype: 'http://www.w3.org/2001/XMLSchema#string', wrapped: '"foo"^^<http://www.w3.org/2001/XMLSchema#string>' },
   { value: 'http://foo.com#bar', wrapped: '"http://foo.com#bar"' },
-  { value: '"Look Ma\', "quotes on quotes"!"', wrapped: '"\"Look Ma\', \"quotes on quotes\"!\""' }, // eslint-disable-line no-useless-escape
+  { value: '"Look Ma\', "quotes on quotes"!"', wrapped: '"\\"Look Ma\', \\"quotes on quotes\\"!\\""' }, // eslint-disable-line no-useless-escape
+  { value: 'x\tx\nx\rx\bx\fx"x\'x\\', wrapped: '"\\"Look Ma\', \\"quotes on quotes\\"!\\""' }, // eslint-disable-line no-useless-escape
   // Abreviations are not RDF spec compliant, but are SPARQL, Turtle and TriG spec compliant
   { value: true, wrapped: 'true' },
   { value: false, wrapped: 'false' },
@@ -290,8 +293,8 @@ const literals = [
   { value: -1, datatype: 'xsd:integer', wrapped: '"-1"^^xsd:integer' },
   { value: 111, datatype: 'xsd:integer', wrapped: '"111"^^xsd:integer' },
   { value: 1.618, datatype: 'xsd:decimal', wrapped: '"1.618"^^xsd:decimal' },
-  { value: 3.141592, datatype: 'xsd:float', wrapped: '"3.141592"^^xsd:float' }, // Not a real float
-  { value: 6.626e-34, datatype: 'xsd:double', wrapped: '"6.626e-34"^^xsd:double' }, // Could be a float
+  { value: 3.141592, datatype: 'xsd:float', wrapped: '"3.141592"^^xsd:float' },
+  { value: 6.626e-34, datatype: 'xsd:double', wrapped: '"6.626e-34"^^xsd:double' },
   { value: 0, datatype: 'http://www.w3.org/2001/XMLSchema#integer', wrapped: '"0"^^<http://www.w3.org/2001/XMLSchema#integer>' },
   { value: -1, datatype: 'http://www.w3.org/2001/XMLSchema#integer', wrapped: '"-1"^^<http://www.w3.org/2001/XMLSchema#integer>' },
   { value: 111, datatype: 'http://www.w3.org/2001/XMLSchema#integer', wrapped: '"111"^^<http://www.w3.org/2001/XMLSchema#integer>' },
@@ -313,7 +316,7 @@ describe('Literals', () => {
   it('has methods to deal with literals', () => {
     assert.isFunction(isLiteral);
     assert.isFunction(getLiteralValue);
-    assert.isFunction(getLiteralDatatype);
+    assert.isFunction(getLiteralDatatypeIri);
     assert.isFunction(getLiteralLanguageTag);
   });
 });
