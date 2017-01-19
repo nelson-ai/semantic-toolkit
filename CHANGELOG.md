@@ -1,6 +1,6 @@
 # Changelog
 
-## tbd
+## 0.2.0
 
 **Breaking changes:**
 - renamed `extendIri` to `extend` and `compactIri` to `compact`
