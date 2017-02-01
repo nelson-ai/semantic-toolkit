@@ -2,6 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/semantic-toolkit.svg)](https://www.npmjs.com/package/semantic-toolkit)
 [![Build Status](https://travis-ci.org/nelson-ai/semantic-toolkit.svg?branch=master)](https://travis-ci.org/nelson-ai/semantic-toolkit)
+[![Coverage Status](https://coveralls.io/repos/github/nelson-ai/semantic-toolkit/badge.svg?branch=master)](https://coveralls.io/github/nelson-ai/semantic-toolkit?branch=master)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
 JavaScript + Semantic web = &lt;3
